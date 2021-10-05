@@ -1,41 +1,37 @@
-# from os import replace, getcwd
-import sys
 import csv
 import argparse
 
 parser = argparse.ArgumentParser(description='Process some data.')
 parser.add_argument('path', metavar='N', type=str, help='path to the file')
-parser.add_argument('-medals', type=str, help='enter country')
-parser.add_argument('year', type=int, help='enter year')
+parser.add_argument('-medals', type=str, nargs='*', help='enter country')
+parser.add_argument('-year', type=int, help='enter year')
 parser.add_argument('-output', nargs='?', type=str)
-
-
 
 args = parser.parse_args()
 
-path = sys.argv[1]
-medals_input = sys.argv[2]
-country_input = sys.argv[3]
-year_input = sys.argv[4]
-# print(year_input)
+path = str(args.path)
+country_input = args.medals
+if len(country_input) > 1:
+    country_input = ' '.join(country_input)
+else:
+    country_input = ''.join(country_input)
+year_input = str(args.year)
 
 with open(path) as csvfile:
     result = []
-
     reader = csv.reader(csvfile)
 
     for row in reader:
-        article = {}
-        article["id"] = row[0]
-        article["name"] = row[1]
-        article["country"] = row[6]
-        article["country_short"] = row[7]
-        article["year"] = row[9]
-        article["game"] = row[12]
-        article["medal"] = row[14]
+        article = {
+            'id': row[0],
+            'name': row[1],
+            'country': row[6],
+            'country_short': row[7],
+            'year': row[9],
+            'game': row[12],
+            'medal': row[14],
+        }
         result.append(article)
-
-# print(result)
 
 formatted_list = []
 
@@ -46,7 +42,6 @@ for d in result:
 
 check_country = []
 for countries in result:
-    # print(bool(country_input in countries.values()))
     if bool(country_input in countries.values()) == False:
         check = 0
     else:
@@ -60,7 +55,6 @@ if 1 not in check_country:
 
 check_year = []
 for years in result:
-    # print(bool(country_input in countries.values()))
     if bool(year_input in years.values()) == False:
         check = 0
     elif int(year_input) < 1896:
@@ -74,19 +68,11 @@ if 1 not in check_year:
     print(answer)
     exit()
 
-
-# print(len(formatted_list))
 if len(formatted_list) < 10:
     answer = 'This country has less than 10 medals.' + '\n'
     print(answer)
 
-
-# print(formatted_list)
-# print('\n' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n')
-
 ten_first = formatted_list[:10]
-# print(ten_first)
-# print('\n' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n' + '\n')
 
 outputs = []
 for e in ten_first:
@@ -101,8 +87,8 @@ bronze = len([i for i in formatted_list if i['medal'] == 'Bronze'])
 total = country_input + ' in ' + str(year_input) + ': ' + str(gold) + ' gold medals, ' + str(silver) + ' silver medals, ' + str(bronze) + ' bronze medals.'
 print('\n' + total)
 
-if sys.argv[5]:
-    file_name = sys.argv[6]
+if args.output:
+    file_name = str(args.output)
     f = open(file_name, 'w')
 
     for x in range(len(outputs)):
