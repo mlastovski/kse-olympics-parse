@@ -9,6 +9,7 @@ parser.add_argument('-output', nargs='?', type=str, help='enter name of the .txt
 parser.add_argument('-total', nargs='?', type=int, help='enter year to display total quantity of medals')
 
 args = parser.parse_args()
+# print(args)
 
 path = str(args.path)
 country_input = args.medals
@@ -24,7 +25,7 @@ with open(path) as csvfile:
 
     for row in reader:
         article = {
-            'id': row[0],
+            # 'id': row[0],
             'name': row[1],
             'country': row[6],
             'country_short': row[7],
@@ -35,8 +36,6 @@ with open(path) as csvfile:
         result.append(article)
 
 formatted_list = []
-ten_first = formatted_list[:10]
-outputs = []
 
 for d in result:
     if year_input in d.values() and country_input in d.values():
@@ -77,6 +76,11 @@ def check_existense():
     return 'ok'
 
 
+ten_first = formatted_list[:10]
+outputs = []
+summary = []
+
+
 def ten_first_medals():
     if len(formatted_list) < 10:
         answer = 'This country has less than 10 medals.' + '\n'
@@ -92,6 +96,7 @@ def ten_first_medals():
     bronze = len([i for i in formatted_list if i['medal'] == 'Bronze'])
 
     total = country_input + ' in ' + str(year_input) + ': ' + str(gold) + ' gold medals, ' + str(silver) + ' silver medals, ' + str(bronze) + ' bronze medals.'
+    summary.append(total)
     print('\n' + total)
     return total
 
@@ -102,7 +107,8 @@ def write_to_file():
     for x in range(len(outputs)):
         f.write(outputs[x] + '\n')
     f.write('\n')
-    f.write(ten_first_medals())
+    tot = ''.join(summary)
+    f.write(tot)
     f.close()
 
 
