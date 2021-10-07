@@ -11,6 +11,8 @@ group.add_argument('-medals', metavar='COUNTRY', type=str, nargs='*', required=F
 group.add_argument('-total', metavar='YEAR', nargs='?', type=int, help='Specify year to display total quantity of medals')
 parser.add_argument('-year', type=int, required=False, help='Specify year')
 parser.add_argument('-output', metavar='PATH_TO_FILE', nargs='?', required=False, type=str, help='Enter name of the .txt file to write output to')
+group.add_argument('-overall', type=str, required=False, help='Enter countries to get the highest medals count')
+
 
 args = parser.parse_args()
 
@@ -35,6 +37,9 @@ if args.total:
     if args.year:
         print('You are not allowed to use "-year" along with "-total".')
         exit()
+
+if args.overall:
+    country_input = args.overall
 
 # convert data from csv file to dict using only necessary keys and values
 with open(path) as csvfile:
@@ -134,6 +139,7 @@ def ten_first_medals():
     return total
 
 
+final_list = []
 def total_all_countries():
     countries_and_medals = []
     for e in formatted_list:
@@ -151,10 +157,9 @@ def total_all_countries():
         results.append(formatted_item)
 
     results = sorted(results)
-    # print(results)
     print('\n' + '\n')
 
-    final_list = []
+
     for i, element in enumerate(results):
         shortened_name = element.split(' - ')[0]
         which_medal = element.split(' - ')[1]
@@ -177,11 +182,13 @@ def total_all_countries():
             del results[:2]
             final_list.append(output)
             continue
+        
         if shortened_name in element and element.split(' - ')[0] in next_element:
             output = shortened_name + ' ||||| ' + next_element.split(' - ')[1] + ' / ' + which_medal + '\n' + '---------------------------------------------------'
             del results[:1]
             final_list.append(output)
             continue
+
         else:
             output = shortened_name + ' ||||| ' + which_medal + '\n' + '---------------------------------------------------'
             final_list.append(output)
@@ -191,19 +198,25 @@ def total_all_countries():
         print(el)
 
 
+def overall_countries():
+    print('overall is used')
+
+
 def write_to_file():
+    file_name = str(args.output)
+    f = open(file_name, 'w')
+
     if args.medals:
-        file_name = str(args.output)
-        f = open(file_name, 'w')
         for x in range(len(outputs)):
             f.write(outputs[x] + '\n')
-        # f.write('\n')
         tot = ''.join(summary)
         f.write(tot)
-        f.close()
     
     elif args.total:
-        print('aue')
+        for x in range(len(final_list)):
+            f.write(final_list[x] + '\n') 
+
+    f.close()
 
 
 if __name__ == "__main__":
@@ -218,6 +231,9 @@ if __name__ == "__main__":
     if args.total:
         if check_years() == 'ok':
             total_all_countries()
+
+    if args.overall:
+        overall_countries()
 
     if args.output:
         write_to_file()
