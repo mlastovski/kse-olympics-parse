@@ -151,7 +151,7 @@ def total_all_countries():
         results.append(formatted_item)
 
     results = sorted(results)
-    print(results)
+    # print(results)
     print('\n' + '\n')
 
     final_list = []
@@ -162,45 +162,54 @@ def total_all_countries():
         if i < len(results)-1:
             next_element = results[i+1]
         else:
-            next_element = results[-1]
+            # next_element = results[-1]
+            None
 
         if i < len(results)-2:
             next_next_element = results[i+2]
         else:
-            next_next_element = results[-1]
+            # next_next_element = results[-1]
+            None
 
 
         if shortened_name in element and element.split(' - ')[0] in next_element and next_element.split(' - ')[0] in next_next_element:
-            output = shortened_name + ' ||||| ' + element.split(' - ')[1] + ', ' + next_element.split(' - ')[1] + ', ' + next_next_element.split(' - ')[1] + '\n' + '---------------------------------------------------'
+            output = shortened_name + ' ||||| ' + next_element.split(' - ')[1] + ' / ' + next_next_element.split(' - ')[1] + ' / ' + which_medal + '\n' + '---------------------------------------------------'
             del results[:2]
-            print(output)
+            final_list.append(output)
             continue
         if shortened_name in element and element.split(' - ')[0] in next_element:
-            output = shortened_name + ' ||||| ' + which_medal + ', ' + next_element.split(' - ')[1] + '\n' + '---------------------------------------------------'
+            output = shortened_name + ' ||||| ' + next_element.split(' - ')[1] + ' / ' + which_medal + '\n' + '---------------------------------------------------'
             del results[:1]
-            print(output)
+            final_list.append(output)
             continue
         else:
             output = shortened_name + ' ||||| ' + which_medal + '\n' + '---------------------------------------------------'
-            print(output)
+            final_list.append(output)
             continue
+    
+    for el in final_list:
+        print(el)
 
 
 def write_to_file():
-    file_name = str(args.output)
-    f = open(file_name, 'w')
-    for x in range(len(outputs)):
-        f.write(outputs[x] + '\n')
-    # f.write('\n')
-    tot = ''.join(summary)
-    f.write(tot)
-    f.close()
+    if args.medals:
+        file_name = str(args.output)
+        f = open(file_name, 'w')
+        for x in range(len(outputs)):
+            f.write(outputs[x] + '\n')
+        # f.write('\n')
+        tot = ''.join(summary)
+        f.write(tot)
+        f.close()
+    
+    elif args.total:
+        print('aue')
 
 
 if __name__ == "__main__":
-    print('\n')
-    print(args)
-    print('\n')
+    # print('\n')
+    # print(args)
+    # print('\n')
 
     if args.medals:
         if check_countries() == 'ok' and check_years() == 'ok':
