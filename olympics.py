@@ -152,8 +152,38 @@ def total_all_countries():
 
     results = sorted(results)
     print(results)
-    
+    print('\n' + '\n')
 
+    final_list = []
+    for i, element in enumerate(results):
+        shortened_name = element.split(' - ')[0]
+        which_medal = element.split(' - ')[1]
+
+        if i < len(results)-1:
+            next_element = results[i+1]
+        else:
+            next_element = results[-1]
+
+        if i < len(results)-2:
+            next_next_element = results[i+2]
+        else:
+            next_next_element = results[-1]
+
+
+        if shortened_name in element and element.split(' - ')[0] in next_element and next_element.split(' - ')[0] in next_next_element:
+            output = shortened_name + ' ||||| ' + element.split(' - ')[1] + ', ' + next_element.split(' - ')[1] + ', ' + next_next_element.split(' - ')[1] + '\n' + '---------------------------------------------------'
+            del results[:2]
+            print(output)
+            continue
+        if shortened_name in element and element.split(' - ')[0] in next_element:
+            output = shortened_name + ' ||||| ' + which_medal + ', ' + next_element.split(' - ')[1] + '\n' + '---------------------------------------------------'
+            del results[:1]
+            print(output)
+            continue
+        else:
+            output = shortened_name + ' ||||| ' + which_medal + '\n' + '---------------------------------------------------'
+            print(output)
+            continue
 
 
 def write_to_file():
