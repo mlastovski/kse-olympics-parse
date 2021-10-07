@@ -1,7 +1,9 @@
+# import libraries
 import csv
 import argparse
 import sys
 
+# add console arguments to program
 parser = argparse.ArgumentParser(description='Process some data.')
 parser.add_argument('path', metavar='PATH', type=str, help='Path to the file')
 group = parser.add_mutually_exclusive_group()
@@ -11,7 +13,6 @@ parser.add_argument('-year', type=int, required=False, help='Specify year')
 parser.add_argument('-output', metavar='PATH_TO_FILE', nargs='?', required=False, type=str, help='Enter name of the .txt file to write output to')
 
 args = parser.parse_args()
-# print(args)
 
 path = str(args.path)
 if args.medals:
@@ -22,6 +23,7 @@ if args.medals:
         print('Please specify a year')
         exit()
 
+    # for correct reading of countries that contain 2 or more words in their name
     if len(country_input) > 1:
         country_input = ' '.join(country_input)
     else:
@@ -34,13 +36,13 @@ if args.total:
         print('You are not allowed to use "-year" along with "-total".')
         exit()
 
+# convert data from csv file to dict using only necessary keys and values
 with open(path) as csvfile:
     result = []
     reader = csv.reader(csvfile)
 
     for row in reader:
         article = {
-            # 'id': row[0],
             'name': row[1],
             'country': row[6],
             'country_short': row[7],
@@ -52,17 +54,20 @@ with open(path) as csvfile:
 
 formatted_list = []
 
+# if action is medals - select positions of given country and year that have medals 
 if args.medals:
     for d in result:
         if year_input in d.values() and country_input in d.values():
             if d['medal'] == 'Bronze' or d['medal'] == 'Silver' or d['medal'] == 'Gold':
                 formatted_list.append(d)
 
+# # if action is total - select positions of given year that have medals 
 if args.total:
     for d in result:
         if year_input in d.values():
             if d['medal'] == 'Bronze' or d['medal'] == 'Silver' or d['medal'] == 'Gold':
                 formatted_list.append(d)
+
 
 def check_years():
     check_year = []
@@ -78,7 +83,6 @@ def check_years():
     if 1 not in check_year:
         answer = 'This year the Olympiad was not held.'
         print(answer)
-        # exit()
         return answer
     
     return 'ok'
@@ -98,7 +102,6 @@ def check_countries():
             answer = 'There is no such country.'
             print(answer)
             return answer
-            # exit()
 
         return 'ok'
     
@@ -137,42 +140,20 @@ def total_all_countries():
         match = e['country_short'] + ' - ' + e['medal']
         countries_and_medals.append(match)
     
-    count = 0
-
-    # print(countries_and_medals)
     set_medals = set(countries_and_medals)
     set_medals = list(set_medals)
-    # print(set_medals)
 
-    results = {}
-    
+    results = []
     for item in set_medals:
-        results[item] = countries_and_medals.count(item)
+        quantity = countries_and_medals.count(item)
+        name_of_country = str(item)
+        formatted_item = name_of_country + ' : ' + str(quantity)
+        results.append(formatted_item)
 
+    results = sorted(results)
     print(results)
+    
 
-
-
-# total_list = []
-# def total_by_year():
-#     for d in result:
-#         if year_input in d.values():
-#             if d['medal'] == 'Bronze' or d['medal'] == 'Silver' or d['medal'] == 'Gold':
-#                 total_list.append(d)
-
-#     countries_and_medals = []
-#     for e in total_list:
-#         match = e['country_short'] + ' - ' + e['medal']
-#         countries_and_medals.append(match)
-
-#     count = 0
-
-#     for i in countries_and_medals:
-#         if i == match:
-#             count +=1 
-
-
-#     print(count)
 
 
 def write_to_file():
@@ -190,9 +171,7 @@ if __name__ == "__main__":
     print('\n')
     print(args)
     print('\n')
-    # print(check_countries())
-    # print(check_years())
-    # print(ten_first_medals())
+
     if args.medals:
         if check_countries() == 'ok' and check_years() == 'ok':
             ten_first_medals()
