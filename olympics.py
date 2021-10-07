@@ -1,23 +1,38 @@
 import csv
 import argparse
+import sys
 
 parser = argparse.ArgumentParser(description='Process some data.')
-parser.add_argument('path', metavar='N', type=str, help='path to the file')
-parser.add_argument('-medals', type=str, nargs='*', help='enter country')
-parser.add_argument('-year', type=int, help='enter year')
-parser.add_argument('-output', nargs='?', type=str, help='enter name of the .txt file to write output to')
-parser.add_argument('-total', nargs='?', type=int, help='enter year to display total quantity of medals')
+parser.add_argument('path', metavar='PATH', type=str, help='Path to the file')
+group = parser.add_mutually_exclusive_group()
+group.add_argument('-medals', metavar='COUNTRY', type=str, nargs='*', required=False, help='Enter country')
+group.add_argument('-total', metavar='YEAR', nargs='?', type=int, help='Specify year to display total quantity of medals')
+parser.add_argument('-year', type=int, required=False, help='Specify year')
+parser.add_argument('-output', metavar='PATH_TO_FILE', nargs='?', required=False, type=str, help='Enter name of the .txt file to write output to')
 
 args = parser.parse_args()
 # print(args)
 
 path = str(args.path)
-country_input = args.medals
-if len(country_input) > 1:
-    country_input = ' '.join(country_input)
-else:
-    country_input = ''.join(country_input)
-year_input = str(args.year)
+if args.medals:
+    country_input = args.medals
+    year_input = str(args.year)
+
+    if args.year == None:
+        print('Please specify a year')
+        exit()
+
+    if len(country_input) > 1:
+        country_input = ' '.join(country_input)
+    else:
+        country_input = ''.join(country_input)
+
+if args.total:
+    year_input = str(args.total)
+
+    if args.year:
+        print('You are not allowed to use "-year" along with "-total".')
+        exit()
 
 with open(path) as csvfile:
     result = []
@@ -37,26 +52,19 @@ with open(path) as csvfile:
 
 formatted_list = []
 
-for d in result:
-    if year_input in d.values() and country_input in d.values():
-        if d['medal'] == 'Bronze' or d['medal'] == 'Silver' or d['medal'] == 'Gold':
-            formatted_list.append(d)
+if args.medals:
+    for d in result:
+        if year_input in d.values() and country_input in d.values():
+            if d['medal'] == 'Bronze' or d['medal'] == 'Silver' or d['medal'] == 'Gold':
+                formatted_list.append(d)
 
-def check_existense():
-    check_country = []
-    for countries in result:
-        if bool(country_input in countries.values()) == False:
-            check = 0
-        else:
-            check = 1
-        check_country.append(check)
+if args.total:
+    for d in result:
+        if year_input in d.values():
+            if d['medal'] == 'Bronze' or d['medal'] == 'Silver' or d['medal'] == 'Gold':
+                formatted_list.append(d)
 
-    if 1 not in check_country:
-        answer = 'There is no such country.'
-        print(answer)
-        return answer
-        # exit()
-
+def check_years():
     check_year = []
     for years in result:
         if bool(year_input in years.values()) == False:
@@ -74,6 +82,28 @@ def check_existense():
         return answer
     
     return 'ok'
+
+
+def check_countries():
+    if args.medals:
+        check_country = []
+        for countries in result:
+            if bool(country_input in countries.values()) == False:
+                check = 0
+            else:
+                check = 1
+            check_country.append(check)
+
+        if 1 not in check_country:
+            answer = 'There is no such country.'
+            print(answer)
+            return answer
+            # exit()
+
+        return 'ok'
+    
+    else:
+        return 'not ok'
 
 
 ten_first = formatted_list[:10]
@@ -95,10 +125,54 @@ def ten_first_medals():
     silver = len([i for i in formatted_list if i['medal'] == 'Silver'])
     bronze = len([i for i in formatted_list if i['medal'] == 'Bronze'])
 
-    total = country_input + ' in ' + str(year_input) + ': ' + str(gold) + ' gold medals, ' + str(silver) + ' silver medals, ' + str(bronze) + ' bronze medals.'
+    total = '\n' + country_input + ' in ' + str(year_input) + ': ' + str(gold) + ' gold medals, ' + str(silver) + ' silver medals, ' + str(bronze) + ' bronze medals.'
     summary.append(total)
     print('\n' + total)
     return total
+
+
+def total_all_countries():
+    countries_and_medals = []
+    for e in formatted_list:
+        match = e['country_short'] + ' - ' + e['medal']
+        countries_and_medals.append(match)
+    
+    count = 0
+
+    # print(countries_and_medals)
+    set_medals = set(countries_and_medals)
+    set_medals = list(set_medals)
+    # print(set_medals)
+
+    results = {}
+    
+    for item in set_medals:
+        results[item] = countries_and_medals.count(item)
+
+    print(results)
+
+
+
+# total_list = []
+# def total_by_year():
+#     for d in result:
+#         if year_input in d.values():
+#             if d['medal'] == 'Bronze' or d['medal'] == 'Silver' or d['medal'] == 'Gold':
+#                 total_list.append(d)
+
+#     countries_and_medals = []
+#     for e in total_list:
+#         match = e['country_short'] + ' - ' + e['medal']
+#         countries_and_medals.append(match)
+
+#     count = 0
+
+#     for i in countries_and_medals:
+#         if i == match:
+#             count +=1 
+
+
+#     print(count)
 
 
 def write_to_file():
@@ -106,18 +180,26 @@ def write_to_file():
     f = open(file_name, 'w')
     for x in range(len(outputs)):
         f.write(outputs[x] + '\n')
-    f.write('\n')
+    # f.write('\n')
     tot = ''.join(summary)
     f.write(tot)
     f.close()
 
 
 if __name__ == "__main__":
-    if check_existense() == 'ok':
-        ten_first_medals()
+    print('\n')
+    print(args)
+    print('\n')
+    # print(check_countries())
+    # print(check_years())
+    # print(ten_first_medals())
+    if args.medals:
+        if check_countries() == 'ok' and check_years() == 'ok':
+            ten_first_medals()
 
-        if args.output:
-            write_to_file()
+    if args.total:
+        if check_years() == 'ok':
+            total_all_countries()
 
-    else:
-        exit()
+    if args.output:
+        write_to_file()
