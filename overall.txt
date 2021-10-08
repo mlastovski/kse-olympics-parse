@@ -13,8 +13,5 @@
 ---------------------------------------------------
 ||||| Belarus in 2008: 29 medals.
 ---------------------------------------------------
- 
-There is no hhh in database, please check if you have entered name properly
-
 ||||| Norway in 1920: 78 medals.
 ---------------------------------------------------

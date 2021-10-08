@@ -1,7 +1,6 @@
 # import libraries
 import csv
 import argparse
-import sys
 
 # add console arguments to program
 parser = argparse.ArgumentParser(description='Process some data.')
@@ -67,23 +66,21 @@ formatted_list = []
 if args.medals:
     for d in result:
         if year_input in d.values() and country_input in d.values():
-            if d['medal'] == 'Bronze' or d['medal'] == 'Silver' or d['medal'] == 'Gold':
+            if d['medal'] != 'NA':
                 formatted_list.append(d)
 
 # # if action is total - select positions of given year that have medals 
 if args.total:
     for d in result:
         if year_input in d.values():
-            if d['medal'] == 'Bronze' or d['medal'] == 'Silver' or d['medal'] == 'Gold':
+            if d['medal'] != 'NA':
                 formatted_list.append(d)
 
 
 def check_years():
     check_year = []
     for years in result:
-        if bool(year_input in years.values()) == False:
-            check = 0
-        elif int(year_input) < 1896:
+        if bool(year_input in years.values()) == False or int(year_input) < 1896:
             check = 0
         else:
             check = 1
@@ -171,13 +168,11 @@ def total_all_countries():
         if i < len(results)-1:
             next_element = results[i+1]
         else:
-            # next_element = results[-1]
             None
 
         if i < len(results)-2:
             next_next_element = results[i+2]
         else:
-            # next_next_element = results[-1]
             None
 
 
