@@ -11,7 +11,7 @@ group.add_argument('-medals', metavar='COUNTRY', type=str, nargs='*', required=F
 group.add_argument('-total', metavar='YEAR', nargs='?', type=int, help='Specify year to display total quantity of medals')
 parser.add_argument('-year', type=int, required=False, help='Specify year')
 parser.add_argument('-output', metavar='PATH_TO_FILE', nargs='?', required=False, type=str, help='Enter name of the .txt file to write output to')
-group.add_argument('-overall', type=str, required=False, help='Enter countries to get the highest medals count')
+group.add_argument('-overall', type=str, required=False, nargs='+', help='Enter countries to get the highest medals count')
 
 
 args = parser.parse_args()
@@ -40,6 +40,11 @@ if args.total:
 
 if args.overall:
     country_input = args.overall
+    country_input = [i for n, i in enumerate(country_input) if i not in country_input[n + 1:]] # remove repeating
+
+    if args.year:
+        print('You are not allowed to use "-year" along with "-overall".')
+        exit()
 
 # convert data from csv file to dict using only necessary keys and values
 with open(path) as csvfile:
@@ -199,7 +204,31 @@ def total_all_countries():
 
 
 def overall_countries():
-    print('overall is used')
+    # if args.overall:
+    print('---------------------------------------------------')
+    for country in country_input:
+        try:
+            for d in result:
+                if country in d.values():
+                    if d['medal'] == 'Bronze' or d['medal'] == 'Silver' or d['medal'] == 'Gold':
+                        formatted_list.append(d)
+
+            for i in formatted_list:
+                i['count'] = sum([1 for j in formatted_list if j['year'] == i['year'] and j['country'] == i['country']])
+
+            max_value = max(item['count'] for item in formatted_list)
+            
+            for e in formatted_list:
+                if e['count'] == max_value:
+                    max_year = e['year']
+            
+            response = '||||| ' + country + " in " + str(max_year) + ': ' + str(max_value) + ' medals.' + '\n' + '---------------------------------------------------'
+            formatted_list.clear()
+            print(response)
+
+        except ValueError:
+            response = " \nThere is no " + country + ' in database, please check if you have entered name properly\n'
+            print(response)
 
 
 def write_to_file():
@@ -234,6 +263,7 @@ if __name__ == "__main__":
 
     if args.overall:
         overall_countries()
+            
 
     if args.output:
         write_to_file()
