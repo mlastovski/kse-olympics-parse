@@ -203,9 +203,11 @@ def total_all_countries():
         print(el)
 
 
+overall_list = []
 def overall_countries():
     # if args.overall:
     print('---------------------------------------------------')
+    overall_list.append('---------------------------------------------------')
     for country in country_input:
         try:
             for d in result:
@@ -224,10 +226,12 @@ def overall_countries():
             
             response = '||||| ' + country + " in " + str(max_year) + ': ' + str(max_value) + ' medals.' + '\n' + '---------------------------------------------------'
             formatted_list.clear()
+            overall_list.append(response)
             print(response)
 
         except ValueError:
             response = " \nThere is no " + country + ' in database, please check if you have entered name properly\n'
+            overall_list.append(response)
             print(response)
 
 
@@ -245,14 +249,14 @@ def write_to_file():
         for x in range(len(final_list)):
             f.write(final_list[x] + '\n') 
 
+    elif args.overall:
+        for x in range(len(overall_list)):
+            f.write(overall_list[x] + '\n')
+
     f.close()
 
 
 if __name__ == "__main__":
-    # print('\n')
-    # print(args)
-    # print('\n')
-
     if args.medals:
         if check_countries() == 'ok' and check_years() == 'ok':
             ten_first_medals()
@@ -263,7 +267,6 @@ if __name__ == "__main__":
 
     if args.overall:
         overall_countries()
-            
 
     if args.output:
         write_to_file()
