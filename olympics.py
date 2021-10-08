@@ -13,7 +13,6 @@ parser.add_argument('-year', type=int, required=False, help='Specify year')
 parser.add_argument('-output', metavar='PATH_TO_FILE', nargs='?', required=False, type=str, help='Enter name of the .txt file to write output to')
 group.add_argument('-overall', type=str, required=False, nargs='+', help='Enter countries to get the highest medals count')
 
-
 args = parser.parse_args()
 
 path = str(args.path)
@@ -205,7 +204,6 @@ def total_all_countries():
 
 overall_list = []
 def overall_countries():
-    # if args.overall:
     print('---------------------------------------------------')
     overall_list.append('---------------------------------------------------')
     for country in country_input:
