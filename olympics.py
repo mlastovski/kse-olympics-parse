@@ -38,8 +38,12 @@ if args.total:
 
 if args.overall:
     country_input = args.overall
-    separate_country = country_input[0].split(', ')
-    country_input = separate_country
+    
+    if len(country_input) > 1: 
+        print('Please enter countries in format: \"COUNTRY_NAME, COUNTRY_NAME\"')
+        exit()
+
+    country_input = country_input[0].split(', ')
 
     if args.year:
         print('You are not allowed to use "-year" along with "-overall".')
@@ -62,6 +66,7 @@ with open(path) as csvfile:
         result.append(article)
 
 formatted_list = []
+separation_line = '---------------------------------------------------'
 
 # if action is medals - select positions of given country and year that have medals 
 if args.medals:
@@ -135,7 +140,10 @@ def ten_first_medals():
     silver = len([i for i in formatted_list if i['medal'] == 'Silver'])
     bronze = len([i for i in formatted_list if i['medal'] == 'Bronze'])
 
-    total = '\n' + country_input + ' in ' + str(year_input) + ': ' + str(gold) + ' gold medals, ' + str(silver) + ' silver medals, ' + str(bronze) + ' bronze medals.'
+    total = (
+        '\n' + country_input + ' in ' + str(year_input) + ': ' + str(gold) 
+        + ' gold medals, ' + str(silver) + ' silver medals, ' + str(bronze) + ' bronze medals.'
+        )
     summary.append(total)
     print('\n' + total)
     return total
@@ -176,21 +184,20 @@ def total_all_countries():
         else:
             None
 
-
         if shortened_name in element and element.split(' - ')[0] in next_element and next_element.split(' - ')[0] in next_next_element:
-            output = shortened_name + ' ||||| ' + next_element.split(' - ')[1] + ' / ' + next_next_element.split(' - ')[1] + ' / ' + which_medal + '\n' + '---------------------------------------------------'
+            output = shortened_name + ' ||||| ' + next_element.split(' - ')[1] + ' / ' + next_next_element.split(' - ')[1] + ' / ' + which_medal + '\n' + separation_line
             del results[:2]
             final_list.append(output)
             continue
         
         if shortened_name in element and element.split(' - ')[0] in next_element:
-            output = shortened_name + ' ||||| ' + next_element.split(' - ')[1] + ' / ' + which_medal + '\n' + '---------------------------------------------------'
+            output = shortened_name + ' ||||| ' + next_element.split(' - ')[1] + ' / ' + which_medal + '\n' + separation_line
             del results[:1]
             final_list.append(output)
             continue
 
         else:
-            output = shortened_name + ' ||||| ' + which_medal + '\n' + '---------------------------------------------------'
+            output = shortened_name + ' ||||| ' + which_medal + '\n' + separation_line
             final_list.append(output)
             continue
     
@@ -200,8 +207,8 @@ def total_all_countries():
 
 overall_list = []
 def overall_countries():
-    print('---------------------------------------------------')
-    overall_list.append('---------------------------------------------------')
+    print(separation_line)
+    overall_list.append(separation_line)
     for country in country_input:
         try:
             for d in result:
@@ -218,7 +225,7 @@ def overall_countries():
                 if e['count'] == max_value:
                     max_year = e['year']
             
-            response = '||||| ' + country + " in " + str(max_year) + ': ' + str(max_value) + ' medals.' + '\n' + '---------------------------------------------------'
+            response = '||||| ' + country + " in " + str(max_year) + ': ' + str(max_value) + ' medals.' + '\n' + separation_line
             formatted_list.clear()
             overall_list.append(response)
             print(response)
