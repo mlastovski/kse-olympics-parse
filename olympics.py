@@ -66,7 +66,7 @@ with open(path) as csvfile:
         result.append(article)
 
 formatted_list = []
-separation_line = '---------------------------------------------------'
+separation_line = '---------------------------------------------------------------'
 
 # if action is medals - select positions of given country and year that have medals 
 if args.medals:
@@ -75,7 +75,7 @@ if args.medals:
             if d['medal'] != 'NA':
                 formatted_list.append(d)
 
-# # if action is total - select positions of given year that have medals 
+# if action is total - select positions of given year that have medals 
 if args.total:
     for d in result:
         if year_input in d.values():
@@ -123,7 +123,6 @@ def check_countries():
 
 ten_first = formatted_list[:10]
 outputs = []
-summary = []
 
 
 def ten_first_medals():
@@ -132,9 +131,12 @@ def ten_first_medals():
         print(answer)
 
     for e in ten_first:
-        output = e['name'] + ' - ' + e['game'] + ' - ' + e['medal']
+        output = separation_line + '\n' + e['name'] + ' - ' + e['game'] + ' - ' + e['medal']
         outputs.append(output)
         print(output)
+
+    outputs.append(separation_line)
+    print(separation_line)
 
     gold = len([i for i in formatted_list if i['medal'] == 'Gold'])
     silver = len([i for i in formatted_list if i['medal'] == 'Silver'])
@@ -144,7 +146,7 @@ def ten_first_medals():
         '\n' + country_input + ' in ' + str(year_input) + ': ' + str(gold) 
         + ' gold medals, ' + str(silver) + ' silver medals, ' + str(bronze) + ' bronze medals.'
         )
-    summary.append(total)
+    outputs.append(total)
     print('\n' + total)
     return total
 
@@ -243,8 +245,6 @@ def write_to_file():
     if args.medals:
         for x in range(len(outputs)):
             f.write(outputs[x] + '\n')
-        final_medals = ''.join(summary)
-        f.write(final_medals)
     
     elif args.total:
         for x in range(len(final_list)):
