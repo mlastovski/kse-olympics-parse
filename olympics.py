@@ -8,9 +8,9 @@ parser.add_argument('path', metavar='PATH', type=str, help='Path to the file')
 group = parser.add_mutually_exclusive_group()
 group.add_argument('-medals', metavar='COUNTRY', type=str, nargs='*', required=False, help='Enter country')
 group.add_argument('-total', metavar='YEAR', nargs='?', type=int, help='Specify year to display total quantity of medals')
-parser.add_argument('-year', type=int, required=False, help='Specify year')
-parser.add_argument('-output', metavar='PATH_TO_FILE', nargs='?', required=False, type=str, help='Enter name of the .txt file to write output to')
-group.add_argument('-overall', type=str, required=False, nargs='+', help='Enter countries to get the highest medals count')
+parser.add_argument('-year', metavar='YEAR', type=int, required=False, help='Specify year')
+parser.add_argument('-output', metavar='PATH_TO_FILE', nargs='?', required=False, type=str, help='Specify name of the .txt file to write output to')
+group.add_argument('-overall', type=str, required=False, nargs='+', help='Enter countries in format: \"COUNTRY_NAME, COUNTRY_NAME\" to get the highest medals count')
 
 args = parser.parse_args()
 
@@ -231,7 +231,7 @@ def overall_countries():
             print(response)
 
         except ValueError:
-            response = " \nThere is no " + country + ' in database, please check if you have entered name properly\n'
+            response = "\nThere is no " + country + ' in database, please check if you have entered name properly\n'
             overall_list.append(response)
             print(response)
 
@@ -243,8 +243,8 @@ def write_to_file():
     if args.medals:
         for x in range(len(outputs)):
             f.write(outputs[x] + '\n')
-        tot = ''.join(summary)
-        f.write(tot)
+        final_medals = ''.join(summary)
+        f.write(final_medals)
     
     elif args.total:
         for x in range(len(final_list)):
