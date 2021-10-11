@@ -38,7 +38,8 @@ if args.total:
 
 if args.overall:
     country_input = args.overall
-    country_input = [i for n, i in enumerate(country_input) if i not in country_input[n + 1:]] # remove repeating
+    separate_country = country_input[0].split(', ')
+    country_input = separate_country
 
     if args.year:
         print('You are not allowed to use "-year" along with "-overall".')
